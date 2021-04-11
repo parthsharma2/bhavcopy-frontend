@@ -1,28 +1,44 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <div class="bg-gray-50 h-screen">
+      <div class="container mx-auto py-6 px-4">
+        <h1 class="text-3xl py-4 border-b mb-10 border-gray-200">
+          Bhavcopy - Equity
+        </h1>
+        <equity-table :records="records"/>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import axios from "axios";
+import EquityTable from "./components/EquityTable.vue";
 
 export default {
-  name: 'App',
+  name: "App",
   components: {
-    HelloWorld
-  }
-}
-</script>
+    "equity-table": EquityTable,
+  },
+  data() {
+    return {
+      records: [],
+      query: "",
+    };
+  },
+  methods: {
+    fetchRecords() {
+      const apiURL = process.env.VUE_APP_API_URL || "http://localhost:8000/api";
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
+      axios
+        .get(`${apiURL}/equity`, { params: { q: this.query } })
+        .then((response) => {
+          this.records = response.data;
+        });
+    },
+  },
+  mounted() {
+    this.fetchRecords();
+  },
+};
+</script>
