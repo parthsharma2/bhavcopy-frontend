@@ -36,7 +36,7 @@
           </div>
         </div>
 
-        <equity-table :records="records" />
+        <equity-table :records="records" :loading="loading" />
       </div>
     </div>
   </div>
@@ -55,16 +55,23 @@ export default {
     return {
       records: [],
       query: "",
+      loading: true,
     };
   },
   methods: {
     fetchRecords() {
       const apiURL = process.env.VUE_APP_API_URL || "http://localhost:8000/api";
 
+      this.loading = true;
+
       axios
         .get(`${apiURL}/equity`, { params: { q: this.query } })
         .then((response) => {
           this.records = response.data;
+          this.loading = false;
+        })
+        .catch((err) => {
+          console.error("An unexpected error occured!", err);
         });
     },
   },

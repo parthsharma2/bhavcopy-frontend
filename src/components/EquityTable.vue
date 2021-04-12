@@ -1,9 +1,13 @@
 <template>
   <div
     class="overflow-x-auto bg-white rounded-lg shadow overflow-y-auto relative"
-    style="max-height: 50vh;"
+    style="height: 50vh;"
   >
+    <div v-if="loading" class="flex h-full">
+      <span class="m-auto ">Loading...</span>
+    </div>
     <table
+      v-else
       class="border-collapse table-auto w-full whitespace-no-wrap bg-white table-striped relative"
     >
       <thead>
@@ -22,10 +26,7 @@
         <template v-for="record in records">
           <tr :key="record.code">
             <template v-for="(heading, idx) in headings">
-              <td
-                :key="idx"
-                class="border-dashed border-t border-gray-200 userId"
-              >
+              <td :key="idx" class="border-dashed border-t border-gray-200">
                 <span class="text-gray-700 px-6 py-3 flex items-center">
                   {{ record[heading] }}
                 </span>
@@ -45,6 +46,10 @@ export default {
     records: {
       type: Array,
       required: true,
+    },
+    loading: {
+      type: Boolean,
+      default: false,
     },
   },
   computed: {
