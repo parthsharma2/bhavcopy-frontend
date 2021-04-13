@@ -34,9 +34,24 @@
               />
             </div>
           </div>
+
+          <div class="shadow rounded-lg flex">
+            <div class="relative">
+              <button
+                @click="downloadAsCSV"
+                class="rounded-lg inline-flex items-center bg-white hover:text-blue-500 focus:outline-none focus:shadow-outline text-gray-500 font-semibold py-2 px-4"
+              >
+                <span>Download Results</span>
+              </button>
+            </div>
+          </div>
         </div>
 
-        <equity-table :records="records" :loading="loading" />
+        <equity-table
+          :records="records"
+          :headings="headings"
+          :loading="loading"
+        />
       </div>
     </div>
   </div>
@@ -58,6 +73,11 @@ export default {
       loading: true,
     };
   },
+  computed: {
+    headings() {
+      return ["code", "name", "open", "high", "low", "close"];
+    },
+  },
   methods: {
     fetchRecords() {
       const apiURL = process.env.VUE_APP_API_URL || "http://localhost:8000/api";
@@ -73,6 +93,30 @@ export default {
         .catch((err) => {
           console.error("An unexpected error occured!", err);
         });
+    },
+    getRecordsAsCSV() {
+      const csv = [
+        this.headings.join(", "),
+        ...this.records.map((row) =>
+          this.headings.map((h) => row[h]).join(", ")
+        ),
+      ];
+
+      return csv.join("\r\n");
+    },
+    downloadAsCSV() {
+      const csv = this.getRecordsAsCSV();
+
+      const blob = new Blob([csv], { type: "text/csv" });
+      const blobURL = URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = blobURL;
+      link.download = "bhavcopy-equity.csv";
+
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     },
   },
   mounted() {

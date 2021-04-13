@@ -47,14 +47,13 @@ export default {
       type: Array,
       required: true,
     },
+    headings: {
+      type: Array,
+      required: true,
+    },
     loading: {
       type: Boolean,
       default: false,
-    },
-  },
-  computed: {
-    headings() {
-      return ["code", "name", "open", "high", "low", "close"];
     },
   },
 };
